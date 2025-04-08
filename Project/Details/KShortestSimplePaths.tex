@@ -1,0 +1,180 @@
+\subsubsection{K shortest simple paths}
+
+\subparagraph{Current implementation}
+The currently implemented methods are Yen's algorithm\cite{yen1971} and Feng's
+algorithm (node classification)\cite{feng2014}. The method
+$shortest\_simple\_paths$ will by default uses Yen's for undirected graphs and
+Feng's for directed graphs.
+
+\subparagraph{Proposed approaches}
+To implement efficient algorithms for the k shortest simple paths problem, we
+propose following the methods introduced in the paper “Finding the k Shortest
+Simple Paths: Time and Space Trade-offs”\cite{kSSP2023}. This is a recent
+paper, offering efficient optimizations for this problem. Furthermore, the fact
+that David Coudert, the mentor of this GSoC project, is a co-author of the
+paper makes this approach particularly well-suited for the project.
+
+\subparagraph{Algorithms to be implemented}
+\begin{itemize}
+    \item \textbf{PNC} (Postponed Node Classification)\cite{kSSP2023}
+          This algorithm performs well on graphs resembling road networks,
+          where the structure tends to be sparse. It offer a faster performance in practice over the classic NC
+          as It delays some of the calls until necessary, in order to avoid some of them.
+
+          \begin{algorithm}[H]
+              \caption{Postponed Node Classification (PNC)\cite{kSSP2023}}
+              \begin{algorithmic}[1]
+                  \Require A digraph \( D = (V, A) \), source \( s \in V \), sink \( t \in V \), integer \( k \)
+                  \Ensure \( k \) shortest simple \( s-t \) paths
+
+                  \State Let \( Candidate \gets \emptyset \) and \( Output \gets \emptyset \)
+                  \State \( T \gets \) an SP in-branching of \( D \) rooted at \( t \)
+                  \State Add \( (P_{st}(T), \omega(P_{st}(T)), 0, 1) \) to \( Candidate \)
+
+                  \While{\( Candidate \neq \emptyset \) and \( |Output| < k \)}
+                  \State \((P = (s, u_1, \cdots, t), \omega(P), i, \zeta) \gets \text{extract shortest element from } Candidate\)
+                  \State \(\pi \gets (s, u_1, \cdots, u_{i-1})\)
+                  \State \( Dev_{old} \gets \{e = (u_i, v) \mid \exists \text{ path in } Output \text{ with prefix } \pi.e \} \)
+
+                  \If{\(\zeta = 1\) \textbf{(\( P \) is simple)}}
+                  \State Add \( P \) to \( Output \)
+                  \State \(\lambda \gets \text{vertex labeling of } D \text{ with respect to } P \text{ and } T\)
+
+                  \For{each vertex \( u_j \) in \( (u_i, \cdots, t) \)}
+                  \State \((u_j, v_{LB}) \gets \text{arc in } A \setminus Dev_{old} \text{ with min } \delta \text{ at } u_j\)
+                  \State \( P_{LB} \gets (s, \cdots, u_j, v_{LB}, P^T_{v_{LB}t}) \)
+                  \State \(\zeta' \gets 0\)
+                  \If{\(\lambda(v_{LB}) > j\) \textbf{(\( P_{LB} \) is simple)}}
+                  \State \(\zeta' \gets 1\)
+                  \EndIf
+                  \State Add \( (P_{LB}, \omega(P_{LB}), j, \zeta') \) to \( Candidate \)
+                  \EndFor
+
+                  \Else
+                  \State Compute shortest \( u_i-t \) path \( Q \) in \( D' = (V \setminus \pi, A \setminus Dev_{old}) \)
+                  \If{\( Q \) exists}
+                  \State Add \( (P' = \pi.Q, \omega(P'), i, 1) \) to \( Candidate \)
+                  \EndIf
+                  \EndIf
+                  \EndWhile
+
+                  \State \Return \( Output \)
+              \end{algorithmic}
+          \end{algorithm}
+
+    \item \textbf{PSB} (Parsimonious Sidetrack-Based)\cite{kSSP2023}
+          This variant is significantly more efficient for complex networks
+          (e.g., social networks, web graphs) where the degrees of the node is higher
+          and diameter tends to be shorter. It offers a trade-off compared to the
+          PNC as it uses more memory but is faster on this type of graphs.
+
+          \begin{algorithm}[H]
+              \caption{Sidetrack Based (SB) Algorithm for the \(k\)SSP (which the PSB is based upon)\cite{SB2016}}
+              \begin{algorithmic}[1]
+                  \Require A digraph \(D = (V, A)\), source \(s \in V\), sink \(t \in V\), integer \(k\)
+                  \Ensure \(k\) shortest simple \(s\)-\(t\) paths
+
+                  \State Let \(Candidate \gets \emptyset\) and \(Output \gets \emptyset\)
+                  \State \(T_0 \gets\) an SP in-branching of \(D\) rooted at \(t\) containing \(s\)
+                  \State Add \(\big((T_0), \omega(P_{st}(T_0)), \zeta = 1\big)\) to \(Candidate\)
+
+                  \While{\(Candidate \neq \emptyset\) and \(|Output| < k\)}
+                  \State \(\mu = \big(\varepsilon = ((T_0, e_0, \cdots, T_h, e_h = (u_h, v_h), T_{h+1}), lb, \zeta\big)) \gets\) a shortest element in \(Candidate\)
+
+                  \If{\(\zeta = 1\)}
+                  \State Extract \(\mu\) from \(Candidate\) and add \(\varepsilon\) to \(Output\)
+                  \For{every deviation \(e = v_jv'\) with \(v_j \in P^{T_{h+1}}_{v_i,t}\)}
+                  \State \(\varepsilon' \gets (T_0, e_0, \cdots, T_h, e_h, T_{h+1}, e, T_{h+1})\)
+                  \State \(lb' \gets lb - \omega(P^{T_{h+1}}_{v_j,t}) + \omega(e) + \omega(P^{T_{h+1}}_{v't})\)
+                  \If{\(\varepsilon'\) represents a simple path}
+                  \State Add \(\mu' = (\varepsilon', lb', \zeta = 1)\) to \(Candidate\)
+                  \Else
+                  \State \(T' \gets\) the name of an SP in-branching of \(D_j(P)\) \Comment{\(T'\) is not computed yet}
+                  \State Add \(\mu'' = \big(\varepsilon'' = (T_0, e_0, \cdots, T_h, e_h, T_{h+1}, e, T'), lb', \zeta = 0\big)\) to \(Candidate\)
+                  \EndIf
+                  \EndFor
+                  \Else
+                  \If{\(T_{h+1}\) has not been computed yet}
+                  \State Compute \(T_{h+1}\), an SP in-branching of \(D_h(P)\)
+                  \EndIf
+                  \State \(\mu' = \big(\varepsilon' = (T_0, e_0, \cdots, T_h, e_h, T_{h+1}), lb + \omega(P^{T_{h+1}}_{v_i,t}) - \omega(P^{T_h}_{v_i,t}), \zeta = 1\big)\)
+                  \State Add \(\mu'\) to \(Candidate\)
+                  \EndIf
+                  \EndWhile
+
+                  \State \Return \(Output\)
+              \end{algorithmic}
+          \end{algorithm}
+\end{itemize}
+
+\subparagraph{Selection algorithm} As discussed in the paper, the optimal algorithm depends heavily on the
+properties of the input graph. What I propose:
+
+Analyzing the graph (e.g., average degree, diameter) and Automatically
+selecting between PNC and PSB based on the graph’s properties:
+\begin{itemize}
+    \item Use PNC for sparse, road-like graphs
+    \item Use PSB for dense, complex networks
+\end{itemize}
+
+\begin{figure}[ht]
+    \centering
+
+    \begin{tikzpicture}
+        [
+        node distance=1cm and 1cm,
+        every node/.style={draw, rectangle, rounded corners, align=center},
+        arrow/.style={-{Stealth}, thick}
+        ]
+
+        \node (kssp) {kSSP};
+        \node (complex) [below left=of kssp] {Complex network};
+        \node (road) [below right=of kssp] {Road network};
+
+        \node (psb) [below=of complex] {PSB};
+
+        \node (pnc) [below=of road] {PNC};
+
+        % Edges
+        \draw [arrow] (kssp) -- (complex);
+        \draw [arrow] (kssp) -- (road);
+
+        \draw [arrow] (complex) -- (psb);
+
+        \draw [arrow] (road) -- (pnc);
+
+    \end{tikzpicture}
+    \caption{Selection decisions for kSSP}
+\end{figure}
+
+Both algorithms natively support weighted directed graphs, and can be easily
+extended to undirected graphs and unweighted graphs.
+
+\subparagraph{Deliverables}
+These are the tasks that are expected to be delivered for this part of the
+project.
+
+\begin{itemize}
+    \item PNC (Postponed Node Classification)
+    \item PSB (Parsimonious Sidetrack-Based)
+    \item Selection algorithm
+\end{itemize}
+
+Each and every task will contain the following
+
+\begin{itemize}
+    \item Core implementation
+    \item Testing
+    \item Documentation
+\end{itemize}
+
+All methods will follow a consistent input/output format:
+\begin{itemize}
+    \item \textbf{Input}: Parameters specifying the paths properties (e.g., starting vertices, ending vertices, weight thresholds).
+    \item \textbf{Output}: Iterators yielding paths in ascending order of weight/length.
+\end{itemize}
+
+\textbf{Note}: Neither the current implementation nor the proposed one will accept a
+parameter k (the number of shortest paths to retrieve). Instead, the iterator
+will continue computing paths until no more can be found.
+

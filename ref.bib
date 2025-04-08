@@ -1,0 +1,80 @@
+@article{kSSP2023,
+  author     = {Al Zoobi, Ali and Coudert, David and Nisse, Nicolas},
+  title      = {Finding the k Shortest Simple Paths: Time and Space Trade-offs},
+  year       = {2023},
+  issue_date = {December 2023},
+  publisher  = {Association for Computing Machinery},
+  address    = {New York, NY, USA},
+  volume     = {28},
+  issn       = {1084-6654},
+  url        = {https://doi.org/10.1145/3626567},
+  doi        = {10.1145/3626567},
+  abstract   = {The k shortest simple path problem (kSSP) asks to compute a set of top-k shortest simple paths from a source to a sink in a digraph. Yen (1971) proposed an algorithm with the best-known polynomial time complexity for this problem. Since then, the problem has been widely studied from an algorithm engineering perspective. The most noticeable proposals are the node-classification (NC) algorithm (Feng, 2014) and the sidetracks-based (SB) algorithm (Kurz, Mutzel, 2016). The latest offers the best running time at the price of a significant memory consumption.We first show how to speed up the SB algorithm using dynamic updates of shortest path trees resulting in a faster algorithm (SB*) with the same memory consumption. We then propose the parsimonious SB (PSB) algorithm that significantly reduces the memory consumption of SB at the cost of a small increase of the running time. Furthermore, we propose the postponed node-classification (PNC) algorithm that combines the best of the NC and the SB algorithms. It offers a significant speed up compared to the SB algorithm while using the same amount of memory as the NC algorithm.Our experimental results on complex networks show that all the considered algorithms have low memory consumption, and that the PSB algorithm is the fastest. On road networks, the relative performances of the algorithms depend on the number k of requested paths. Indeed, when the number k of requested paths is small (i.e., k ≤ 20 in our experiments), the SB* algorithm is the fastest among the considered algorithms, but it suffers from a large memory consumption and it offers very bad performances on some queries. When the number of requested paths is large (i.e., larger than 20 according to our experiments), the PNC algorithm is the fastest among the considered algorithms on road networks and it has a low memory footprint. The PNC algorithm is therefore a better choice on road networks.},
+  journal    = {ACM J. Exp. Algorithmics},
+  month      = dec,
+  articleno  = {1.11},
+  numpages   = {23},
+  keywords   = {k shortest simple paths; graph algorithm; space-time trade-off}
+}
+
+
+@article{johnson1975,
+  author   = {Johnson, Donald B.},
+  title    = {Finding All the Elementary Circuits of a Directed Graph},
+  journal  = {SIAM Journal on Computing},
+  volume   = {4},
+  number   = {1},
+  pages    = {77-84},
+  year     = {1975},
+  doi      = {10.1137/0204007},
+  url      = { 
+              https://doi.org/10.1137/0204007
+              },
+  eprint   = { 
+              https://doi.org/10.1137/0204007
+              },
+  abstract = { An algorithm is presented which finds all the elementary circuits of a directed graph in time bounded by \$O((n + e)(c + 1))\$ and space bounded by \$O(n + e)\$, where there are n vertices, e edges and c elementary circuits in the graph. The algorithm resembles algorithms by Tiernan and Tarjan, but is faster because it considers each edge at most twice between any one circuit and the next in the output sequence. }
+}
+
+@article{yen1971,
+  title     = {Finding the {K} Shortest Loopless Paths in a Network},
+  author    = {Jin Y. Yen},
+  journal   = {Management Science},
+  volume    = {17},
+  number    = {11},
+  pages     = {712--716},
+  year      = {1971},
+  publisher = {INFORMS},
+  doi       = {10.1287/mnsc.17.11.712}
+}
+
+@article{feng2014,
+  author   = {Feng, Gang},
+  title    = {Finding k shortest simple paths in directed graphs: A node classification algorithm},
+  journal  = {Networks},
+  volume   = {64},
+  number   = {1},
+  pages    = {6-17},
+  keywords = {graph algorithm, k shortest paths, node classification, simple paths, replacement paths, Dijkstra's algorithm},
+  doi      = {https://doi.org/10.1002/net.21552},
+  url      = {https://onlinelibrary.wiley.com/doi/abs/10.1002/net.21552},
+  eprint   = {https://onlinelibrary.wiley.com/doi/pdf/10.1002/net.21552},
+  abstract = {We propose a new exact algorithm for enumerating k shortest simple paths in a directed graph with n nodes and m edges. The algorithm has a complexity of and follows the same process as Yen's deviation algorithm, but the candidate paths are computed more efficiently using a node classification technique. We first show that a candidate path can be separated by its deviation node as prefix and suffix. Our algorithm then classifies the nodes as red, yellow, and green. A node on the prefix is assigned a red color, a node that can reach t (the destination node) through a shortest path without visiting a red node is assigned a green color, and all other nodes are assigned a yellow color. We prove that when searching for the suffix of a candidate path, all green nodes can be bypassed, and we only need to apply Dijkstra's algorithm to find an all-yellow-node subpath. Since on average the number of yellow nodes is much smaller than n, the new algorithm has a much lower average-case running time. Experiments on many types of networks demonstrate that the new algorithm performs significantly better than existing exact algorithms that have polynomial worst-case complexity. © 2014 Wiley Periodicals, Inc. NETWORKS, Vol. 64(1), 6–17 2014},
+  year     = {2014}
+}
+
+@article{SB2016,
+  author     = {Denis Kurz and
+                Petra Mutzel},
+  title      = {A Sidetrack-Based Algorithm for Finding the k Shortest Simple Paths
+                in a Directed Graph},
+  journal    = {CoRR},
+  volume     = {abs/1601.02867},
+  year       = {2016},
+  url        = {http://arxiv.org/abs/1601.02867},
+  eprinttype = {arXiv},
+  eprint     = {1601.02867},
+  timestamp  = {Mon, 13 Aug 2018 16:46:20 +0200},
+  biburl     = {https://dblp.org/rec/journals/corr/KurzM16.bib},
+  bibsource  = {dblp computer science bibliography, https://dblp.org}
+}

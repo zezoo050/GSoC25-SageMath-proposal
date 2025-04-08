@@ -1,0 +1,41 @@
+\documentclass[a4paper,12pt]{article}
+\usepackage[colorlinks=true, linkcolor=blue, urlcolor=blue, citecolor=blue]{hyperref}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage[a4paper, left=1.5cm, right=1.5cm, top=2cm, bottom=2cm]{geometry}
+\usepackage{float}
+\usepackage[none]{hyphenat}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{tikz}
+\usetikzlibrary{shapes, arrows.meta, positioning}
+\usepackage{tabularx}
+\usepackage{titling}
+
+\title{\Huge Paths and cycles enumeration methods in graphs --- GSoC 2025}
+\author{Ziad Tarek}
+\date{}
+
+\begin{document}
+
+\pretitle{%
+    \begin{center}
+    \includegraphics[width=10cm]{logo_sagemath.png}\\[\bigskipamount]
+}
+
+\maketitle
+\tableofcontents
+\listofalgorithms
+\newpage
+
+\input{Personal.tex}
+
+\input{Background.tex}
+
+\input{Project/Project.tex}
+
+\clearpage
+\bibliographystyle{plain}
+\bibliography{ref}
+
+\end{document}

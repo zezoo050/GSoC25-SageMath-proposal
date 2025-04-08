@@ -1,0 +1,12 @@
+# Ignore all files with these extensions
+*.aux
+*.bbl
+*.log
+*.out
+*.fls
+*.fdb_latexmk
+*.blg
+*.loa
+*.toc
+*.synctex.gz
+.vscode
